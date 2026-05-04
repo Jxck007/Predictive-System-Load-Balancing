@@ -5,6 +5,8 @@ import cors from 'cors';
 import dotenv from 'dotenv';
 import routes from './routes/index.js';
 import { initDb } from './db/index.js';
+import fs from 'fs';
+import path from 'path';
 
 dotenv.config();
 
@@ -21,13 +23,25 @@ app.use('/api', routes);
 // Health endpoint
 app.get('/health', (req, res) => res.json({ status: 'ok' }));
 
-// Root endpoint for deployment checks
-app.get('/', (req, res) => {
-  res.json({
-    status: 'ok',
-    service: 'predictive-system-load-balancing-backend',
+// Serve frontend static files when available (built by CI/Render)
+const staticDir = path.resolve(process.cwd(), 'frontend', 'dist');
+if (fs.existsSync(staticDir)) {
+  app.use(express.static(staticDir));
+
+  // SPA fallback: serve index.html for all non-API routes
+  app.get('*', (req, res, next) => {
+    if (req.path.startsWith('/api') || req.path === '/health' || req.path.startsWith('/socket.io')) return next();
+    res.sendFile(path.join(staticDir, 'index.html'));
   });
-});
+} else {
+  // Root endpoint for deployment checks (when frontend not built)
+  app.get('/', (req, res) => {
+    res.json({
+      status: 'ok',
+      service: 'predictive-system-load-balancing-backend',
+    });
+  });
+}
 
 // WebSocket events
 io.on('connection', (socket) => {
