@@ -1,0 +1,9 @@
+services:
+  - type: web
+    name: predictive-system-load-balancing
+    env: node
+    plan: free
+    rootDir: .
+    buildCommand: npm ci && npm run build
+    startCommand: npm run start
+    autoDeploy: true
