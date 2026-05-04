@@ -43,6 +43,20 @@ if (fs.existsSync(staticDir)) {
   });
 }
 
+// Debug endpoint to report static build presence (safe to leave in prod)
+app.get('/_static_status', (req, res) => {
+  const exists = fs.existsSync(staticDir);
+  let files = [];
+  if (exists) {
+    try {
+      files = fs.readdirSync(staticDir).slice(0, 20);
+    } catch (err) {
+      files = [`error reading directory: ${err.message}`];
+    }
+  }
+  res.json({ exists, files });
+});
+
 // WebSocket events
 io.on('connection', (socket) => {
   console.log('Client connected:', socket.id);
