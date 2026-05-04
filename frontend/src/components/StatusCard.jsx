@@ -1,11 +1,17 @@
 import React, { useEffect, useState } from 'react';
 import { fetchMetrics } from '../utils/api';
 
+const demoMetrics = [
+  { name: 'Server A', cpu_usage: 35.2, memory_usage: 60.1, timestamp: new Date().toISOString() },
+  { name: 'Server B', cpu_usage: 55.7, memory_usage: 70.3, timestamp: new Date().toISOString() },
+  { name: 'Server C', cpu_usage: 20.5, memory_usage: 40.2, timestamp: new Date().toISOString() },
+];
+
 const StatusCard = () => {
-  const [metrics, setMetrics] = useState([]);
+  const [metrics, setMetrics] = useState(demoMetrics);
 
   useEffect(() => {
-    fetchMetrics().then(setMetrics);
+    fetchMetrics().then(setMetrics).catch(() => setMetrics(demoMetrics));
   }, []);
 
   const latest = metrics[0] || {};

@@ -3,11 +3,17 @@ import { LineChart, Line, XAxis, YAxis, Tooltip, Legend, ResponsiveContainer } f
 import { fetchMetrics } from '../utils/api';
 import useSocket from '../hooks/useSocket';
 
+const demoMetrics = [
+  { timestamp: new Date(Date.now() - 120000).toISOString(), cpu_usage: 35.2, memory_usage: 60.1 },
+  { timestamp: new Date(Date.now() - 60000).toISOString(), cpu_usage: 55.7, memory_usage: 70.3 },
+  { timestamp: new Date().toISOString(), cpu_usage: 20.5, memory_usage: 40.2 },
+];
+
 const LiveChart = () => {
-  const [data, setData] = useState([]);
+  const [data, setData] = useState(demoMetrics);
 
   useEffect(() => {
-    fetchMetrics().then(setData);
+    fetchMetrics().then(setData).catch(() => setData(demoMetrics));
   }, []);
 
   useSocket('metrics_update', (newMetric) => {

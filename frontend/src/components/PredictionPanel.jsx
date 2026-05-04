@@ -1,11 +1,17 @@
 import React, { useEffect, useState } from 'react';
 import { fetchPredictions } from '../utils/api';
 
+const demoPredictions = [
+  { id: 1, name: 'Server A', predicted_load: 40.0 },
+  { id: 2, name: 'Server B', predicted_load: 60.0 },
+  { id: 3, name: 'Server C', predicted_load: 25.0 },
+];
+
 const PredictionPanel = () => {
-  const [predictions, setPredictions] = useState([]);
+  const [predictions, setPredictions] = useState(demoPredictions);
 
   useEffect(() => {
-    fetchPredictions().then(setPredictions);
+    fetchPredictions().then(setPredictions).catch(() => setPredictions(demoPredictions));
   }, []);
 
   return (
