@@ -24,8 +24,14 @@ app.use('/api', routes);
 app.get('/health', (req, res) => res.json({ status: 'ok' }));
 
 // Serve frontend static files when available (built by CI/Render)
-const staticDir = path.resolve(process.cwd(), 'frontend', 'dist');
-if (fs.existsSync(staticDir)) {
+// Workspace scripts may run with cwd at repo root or backend/, so check both.
+const staticCandidates = [
+  path.resolve(process.cwd(), 'frontend', 'dist'),
+  path.resolve(process.cwd(), '..', 'frontend', 'dist'),
+];
+const staticDir = staticCandidates.find((candidate) => fs.existsSync(candidate));
+
+if (staticDir) {
   app.use(express.static(staticDir));
 
   // SPA fallback: serve index.html for all non-API routes
@@ -45,7 +51,7 @@ if (fs.existsSync(staticDir)) {
 
 // Debug endpoint to report static build presence (safe to leave in prod)
 app.get('/_static_status', (req, res) => {
-  const exists = fs.existsSync(staticDir);
+  const exists = Boolean(staticDir);
   let files = [];
   if (exists) {
     try {
