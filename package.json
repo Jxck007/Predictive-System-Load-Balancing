@@ -7,8 +7,8 @@
     "ml-service"
   ],
   "scripts": {
-    "dev": "echo 'See backend/ and frontend/ for dev scripts'",
-    "build": "echo 'See backend/ and frontend/ for build scripts'",
-    "start": "echo 'See backend/ and frontend/ for start scripts'"
+    "dev": "npm run start --workspace backend",
+    "build": "npm run build --workspace frontend",
+    "start": "npm run start --workspace backend"
   }
 }
