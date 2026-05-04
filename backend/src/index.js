@@ -21,6 +21,14 @@ app.use('/api', routes);
 // Health endpoint
 app.get('/health', (req, res) => res.json({ status: 'ok' }));
 
+// Root endpoint for deployment checks
+app.get('/', (req, res) => {
+  res.json({
+    status: 'ok',
+    service: 'predictive-system-load-balancing-backend',
+  });
+});
+
 // WebSocket events
 io.on('connection', (socket) => {
   console.log('Client connected:', socket.id);
